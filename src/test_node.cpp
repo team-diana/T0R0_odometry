@@ -1,21 +1,19 @@
 #include "ros/ros.h"
-//#include "geometry_msgs.h"
-//#include "actionlib_msgs.h"
-//#include "message_generation.h"
 #include "nav_msgs/Odometry.h"
-//#include "message_runtime.h"
 
-/*
+
 double roll = 0;
 double pitch = 0;
 double yaw = 0;
 
+/*
 static void toEulerAngle(float* q, double* roll, double* pitch, double* yaw)
 {
   // roll (x-axis rotation)
   double sinr = +2.0 * (q[0] * q[1] + q[2] * q[3]);
   double cosr = +1.0 - 2.0 * (q[1] * q[1] + q[2] * q[2]);
   *roll = atan2(sinr, cosr);
+
   // pitch (y-axis rotation)
   double sinp = +2.0 * (q[0] * q[2] - q[3] * q[1]);
   if (fabs(sinp) >= 1)
@@ -26,6 +24,7 @@ static void toEulerAngle(float* q, double* roll, double* pitch, double* yaw)
   {
     *pitch = asin(sinp);
   }
+
   // yaw (z-axis rotation)
   double siny = +2.0 * (q[0] * q[3] + q[1] * q[2]);
   double cosy = +1.0 - 2.0 * (q[2] * q[2] + q[3] * q[3]);
@@ -58,13 +57,46 @@ void zedCallback(const nav_msgs::Odometry::ConstPtr& msg)
     }
   }
 /**/
-  ROS_INFO("Position x: [%f]\n Position y: [%f]\n Position z: [%f]\n Quaternion w: [%lf]\n Quaternion x: [%lf]\n Quaternion y: [%lf]\n Quaternion z: [%lf]\n", msg->pose.pose.position.x,
+
+/**/
+ // roll (x-axis rotation)
+  double sinr = +2.0 * (msg->pose.pose.orientation.w * msg->pose.pose.orientation.x + msg->pose.pose.orientation.y * msg->pose.pose.orientation.z);
+  double cosr = +1.0 - 2.0 * (msg->pose.pose.orientation.x * msg->pose.pose.orientation.x + msg->pose.pose.orientation.y * msg->pose.pose.orientation.y);
+  roll = atan2(sinr, cosr);
+
+  // pitch (y-axis rotation)
+  double sinp = +2.0 * (msg->pose.pose.orientation.w * msg->pose.pose.orientation.y - msg->pose.pose.orientation.z * msg->pose.pose.orientation.x);
+  if (fabs(sinp) >= 1)
+  {
+    pitch = copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+  }
+  else
+  {
+    pitch = asin(sinp);
+  }
+
+  // yaw (z-axis rotation)
+  double siny = +2.0 * (msg->pose.pose.orientation.w * msg->pose.pose.orientation.z + msg->pose.pose.orientation.x * msg->pose.pose.orientation.y);
+  double cosy = +1.0 - 2.0 * (msg->pose.pose.orientation.y * msg->pose.pose.orientation.y + msg->pose.pose.orientation.z * msg->pose.pose.orientation.z);
+  yaw = atan2(siny, cosy);
+/**/
+
+/**/
+ ROS_INFO("\nPosition x: [%f]\n Position y: [%f]\n Position z: [%f]\n Roll: [%lf]\n Pitch: [%lf]\n Yaw: [%lf]\n", msg->pose.pose.position.x,
+                                                             msg->pose.pose.position.y,
+                                                             msg->pose.pose.position.z,
+                                                             roll, pitch, yaw);
+/**/
+
+/*
+  ROS_INFO("\nPosition x: [%f]\n Position y: [%f]\n Position z: [%f]\n Quaternion w: [%lf]\n Quaternion x: [%lf]\n Quaternion y: [%lf]\n Quaternion z: [%lf]\n", msg->pose.pose.position.x,
                                                              msg->pose.pose.position.y,
                                                              msg->pose.pose.position.z,
                                                              msg->pose.pose.orientation.w,
 							     msg->pose.pose.orientation.x,
 							     msg->pose.pose.orientation.y,
 						     	     msg->pose.pose.orientation.z);
+/**/
 }
 
 int main(int argc, char **argv)
