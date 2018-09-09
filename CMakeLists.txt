@@ -124,6 +124,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/T0R0_odometry.cpp
@@ -202,6 +203,13 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(zedtest src/test_node.cpp)
-target_link_libraries(zedtest ${catkin_LIBRARIES})
+
+#add_executable(zedtest src/test_node.cpp)
+#target_link_libraries(zedtest ${catkin_LIBRARIES})
+
+file(GLOB HEADER_FILE "include/*.h")
+file(GLOB SOURCE_FILE "include/*.c")
+
+add_executable(zedmqtt src/test_mqtt.cpp ${HEADER_FILE} ${SOURCE_FILE})
+target_link_libraries(zedmqtt ${catkin_LIBRARIES} ${catkin_INCLUDE_DIRS})
 #add_dependencies(zedtest )
