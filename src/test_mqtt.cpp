@@ -1,7 +1,5 @@
-/*
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
-/**/
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -11,10 +9,10 @@
 #include <map>
 #include <vector>
 #include <cstring>
-#include "mqtt/client.h"
+#include "client.h"
 
 //#define ADDRESS "192.168.1.209"	// Broker IP
-#define ADDRESS "127.0.0.1"
+#define ADDRESS "10.0.2.15"
 #define CLIENTID "ODOM ID"
 #define TOPIC "odom"
 #define QOS 2
