@@ -207,8 +207,8 @@ include_directories(
 #add_executable(zedtest src/test_node.cpp)
 #target_link_libraries(zedtest ${catkin_LIBRARIES})
 
-file(GLOB HEADER_FILE "include/*.h")
-file(GLOB SOURCE_FILE "include/*.c")
+file(GLOB HEADER_FILE "include/*.h" "include/mqtt/*.h")
+file(GLOB SOURCE_FILE "include/*.c" "include/mqtt/*.c")
 
 add_executable(zedmqtt src/test_mqtt.cpp ${HEADER_FILE} ${SOURCE_FILE})
 target_link_libraries(zedmqtt ${catkin_LIBRARIES} ${catkin_INCLUDE_DIRS})
