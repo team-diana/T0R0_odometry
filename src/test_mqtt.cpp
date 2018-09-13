@@ -1,12 +1,15 @@
+/*
 #include "ros/ros.h"
 #include "nav_msgs/Odometry.h"
+/**/
 
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
 #include "MQTTClient.h"
 
-#define ADDRESS "192.168.1.209"	// Broker IP
+//#define ADDRESS "192.168.1.209"	// Broker IP
+#define ADDRESS "127.0.0.1"
 #define CLIENTID "ODOM ID"
 #define TOPIC "odom"
 #define QOS 2
@@ -17,9 +20,9 @@ double yaw = 0;
 
 char px[8];
 
+/*
 void zedCallback(const nav_msgs::Odometry::ConstPtr& msg)
 {
-/**/
  // roll (x-axis rotation)
   double sinr = +2.0 * (msg->pose.pose.orientation.w * msg->pose.pose.orientation.x + msg->pose.pose.orientation.y * msg->pose.pose.orientation.z);
   double cosr = +1.0 - 2.0 * (msg->pose.pose.orientation.x * msg->pose.pose.orientation.x + msg->pose.pose.orientation.y * msg->pose.pose.orientation.y);
@@ -49,6 +52,7 @@ void zedCallback(const nav_msgs::Odometry::ConstPtr& msg)
                                                              roll, pitch, yaw);
 /**/
 
+/*
   int rc = 0;
   MQTTClient zed;
   MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
@@ -68,15 +72,46 @@ void zedCallback(const nav_msgs::Odometry::ConstPtr& msg)
     printf("Message published\n");
   }
 }
+/**/
 
 int main(int argc, char **argv)
 {
+  int rc = 0;
+  MQTTClient zed;
+  MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
+  MQTTClient_create(&zed, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+
+  if(rc = MQTTClient_connect(zed, &conn_opts) != MQTTCLIENT_SUCCESS)
+  {
+    printf("Connection failed. Return code: %d\n", rc);
+  }
+
+  MQTTClient_message test = MQTTClient_message_initializer;
+  test.payload = "hi!";
+  if(MQTTClient_publishMesssage(zed, TOPIC, &test, NULL))
+  {
+    printf("MESSAGE PUBLISHED!");
+  }
+  
+ /*
+  MQTTClient_message posx = MQTTClient_message_initializer;
+  sprintf(px, "%lf", msg->pose.pose.position.x);
+  posx.payload = px;
+  if(MQTTClient_publishMessage(zed, TOPIC, &posx, NULL))
+  {
+    ROS_INFO("MESSAGE PUBLISHED!\n");
+    printf("Message published\n");
+  }
+ /**/
+ 
+ /*
   ros::init(argc, argv, "zedmqtt");
   ros::NodeHandle n;
   ros::Subscriber sub = n.subscribe("/zed/odom", 1000, zedCallback);
 
   ros::spin();
-
+/**/
+ 
   return 0;
 }
 
